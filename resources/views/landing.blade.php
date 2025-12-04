@@ -45,7 +45,8 @@
         .logo { display: flex; align-items: center; gap: .5rem; text-decoration: none; }
         .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--teal-500), var(--cyan-600)); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .logo-text { font-size: 1.5rem; font-weight: bold; color: var(--teal-800); }
-        .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+        .nav-links { display: flex; align-items: center; gap: 1.25rem; list-style: none; }
+        .btn-sm { padding: .5rem 1rem; font-size: .875rem; }
         .nav-links a { color: var(--gray-700); text-decoration: none; font-weight: 500; transition: color .3s ease; }
         .nav-links a:hover { color: var(--teal-600); }
         .btn { padding: .75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all .3s ease; cursor: pointer; border: none; display: inline-block; }
@@ -133,8 +134,7 @@
                 <li><a href="#fitur">Fitur</a></li>
                 <li><a href="#manfaat">Manfaat</a></li>
                 <li><a href="#tentang">Tentang</a></li>
-                <li><a href="/login" class="btn btn-outline">Login</a></li>
-                <li><a href="#daftar" class="btn btn-primary">Daftar Sekarang</a></li>
+                <li><a href="/login" class="btn btn-outline btn-sm">Login</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMenu()">☰</button>
         </nav>
