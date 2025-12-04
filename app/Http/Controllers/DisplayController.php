@@ -20,7 +20,7 @@ class DisplayController extends Controller
                 $q->where('is_active', true);
             },
             'prayerSettings' => function ($q) {
-                $q->latest();
+                $q->orderByDesc('id');
             },
         ])->where('slug', $slug)->where('is_active', true)->firstOrFail();
 
@@ -60,7 +60,7 @@ class DisplayController extends Controller
                 $q->where('is_active', true);
             },
             'prayerSettings' => function ($q) {
-                $q->latest();
+                $q->orderByDesc('id');
             },
         ])->where('slug', $slug)->where('is_active', true)->firstOrFail();
 

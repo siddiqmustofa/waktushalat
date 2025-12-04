@@ -190,7 +190,7 @@
                         maghrib: {{ optional($display)->sound_maghrib ? 'true' : 'false' }},
                         isha: {{ optional($display)->sound_isha ? 'true' : 'false' }}
                     };
-                    if (subEl) subEl.innerText = soundMap[k] ? 'Audio Adzan Diputar' : 'Adzan Tanpa Audio';
+                    if (subEl) subEl.innerText = '';
                     this.playSound(text);
                     const t = this.parseToday(this.times[k]);
                     const iqomahEnd = t ? new Date(t.getTime() + this.timers.adzan * 60 * 1000 + (this.timers.iqomah[k] || 0) * 60 * 1000) : null;
@@ -292,6 +292,12 @@
         .top-card .content { padding: 1rem; }
         .right-panel .top-card { max-width: 600px; margin-left:0; margin-right:auto; }
         @media (max-width: 768px) { .right-panel .top-card { max-width: 100%; } }
+        .azan-content { text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .azan-title { font-size:3.5rem; font-weight:900; letter-spacing:.08em; }
+        .azan-sub { margin-top:.75rem; font-size:1.125rem; opacity:.9; }
+        .sholat-content { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .sholat-title { font-size:4rem; font-weight:900; letter-spacing:.08em; }
+        .sholat-sub { margin-top:.75rem; font-size:1.25rem; opacity:.9; }
     </style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -331,11 +337,11 @@
     <div id="display-adzan" class="full-screen" style="display:none">
         <div class="azan-content">
             <div class="azan-title">ADZAN</div>
-            <div class="azan-sub">Audio Adzan Diputar</div>
+            <div class="azan-sub"></div>
         </div>
     </div>
     <div id="display-shalat" class="full-screen" style="display:none">
-        <div class="azan-content">
+        <div class="azan-content sholat-content">
             <div class="sholat-title">SHOLAT BERLANGSUNG</div>
             <div class="sholat-sub">Mohon tenang dan matikan HP</div>
         </div>
@@ -358,7 +364,6 @@
                 </div>
             </div>
             <div class="clock" x-html="timeText"></div>
-            <button class="mt-2 px-3 py-1 rounded" style="background: rgba(99,102,241,.15); border:1px solid rgba(99,102,241,.35);" @click="(function(){ const a = document.getElementById('adzan-audio'); if(!a) return; a.muted = false; a.play().then(()=>{ a.pause(); a.currentTime = 0; }).catch(()=>{}); })()">Aktifkan Audio</button>
             <div class="mt-2 text-2xl font-semibold" x-text="dateText"></div>
             <div id="jadwal" class="space-y-2">
                 <div class="schedule-row" :class="{'active': activeKey==='fajr'}"><div>Subuh</div><div>{{ optional($prayer)->fajr_time?->format('H:i') ?? '-' }}</div></div>

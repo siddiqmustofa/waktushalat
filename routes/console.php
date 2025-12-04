@@ -25,7 +25,7 @@ Artisan::command('simulate:shalat {slug} {waktu?} {--fast}', function () {
 
     $now = Carbon::now($mosque->timezone ?? 'UTC');
 
-    $ps = PrayerSetting::where('mosque_id', $mosque->id)->latest()->first();
+    $ps = PrayerSetting::where('mosque_id', $mosque->id)->orderByDesc('id')->first();
     if (! $ps) {
         $ps = new PrayerSetting(['mosque_id' => $mosque->id]);
     }
@@ -89,7 +89,7 @@ Artisan::command('simulate:jumat {slug} {--fast}', function () {
 
     $now = Carbon::now($mosque->timezone ?? 'UTC');
 
-    $ps = PrayerSetting::where('mosque_id', $mosque->id)->latest()->first();
+    $ps = PrayerSetting::where('mosque_id', $mosque->id)->orderByDesc('id')->first();
     if (! $ps) {
         $ps = new PrayerSetting(['mosque_id' => $mosque->id]);
     }

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->time('isha_time')->nullable();
             $table->date('effective_date')->nullable();
             $table->timestamps();
+            $table->index(['mosque_id', 'id']);
+            $table->index(['mosque_id', 'created_at']);
         });
     }
 

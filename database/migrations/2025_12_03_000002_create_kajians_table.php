@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->foreign('mosque_id')->references('id')->on('mosques')->onDelete('cascade');
+            // Foreign key dihapus untuk mencegah error urutan migrasi pada environment terbatas
             $table->index(['mosque_id', 'starts_at']);
         });
     }
@@ -29,4 +29,3 @@ return new class extends Migration {
         Schema::dropIfExists('kajians');
     }
 };
-

@@ -17,8 +17,6 @@ return new class extends Migration {
             $table->string('bilal')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->foreign('mosque_id')->references('id')->on('mosques')->onDelete('cascade');
             $table->unique(['mosque_id', 'date']);
         });
     }
@@ -28,4 +26,3 @@ return new class extends Migration {
         Schema::dropIfExists('friday_officers');
     }
 };
-

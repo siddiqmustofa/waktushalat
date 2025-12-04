@@ -213,37 +213,37 @@
             <div class="bg-white dark:bg-gray-800 border rounded-2xl shadow-sm">
                 <div class="px-6 py-4 border-b">
                     <div class="text-lg font-semibold">Kalkulasi Otomatis</div>
-                    <div class="text-sm text-slate-500">Konfigurasi metode perhitungan berbasis koordinat (opsional).</div>
+                    <div class="text-sm text-slate-500">Pilih antara koordinat atau API MyQuran.</div>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium">Metode kalkulasi</label>
                         <select name="calculation_method" class="mt-2 w-full">
-                            @php($methods = ['0'=>'Manual','MWL'=>'MWL','ISNA'=>'ISNA','Egypt'=>'Egypt','Makkah'=>'Makkah','Karachi'=>'Karachi','Tehran'=>'Tehran','Jafari'=>'Jafari'])
+                            @php($methods = ['0'=>'Manual','MyQuranV3'=>'MyQuran v3 (API)'])
                             @foreach($methods as $k=>$v)
                                 <option value="{{ $k }}" @selected(old('calculation_method', optional($prayer)->calculation_method) == $k)>{{ $v }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
+                        <label class="block text-sm font-medium">MyQuran v3 City ID</label>
+                        <input type="text" name="myquran_v3_city_id" value="{{ old('myquran_v3_city_id', optional($prayer)->myquran_v3_city_id) }}" class="mt-2 w-full" placeholder="eda80a3d5b344bc40f3bc04f65b7a357">
+                        <div class="text-xs mt-1 text-slate-500">Gunakan ID unik kota dari MyQuran v3.</div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Cari Kota (MyQuran v3)</label>
+                        <div class="mt-2 flex items-center gap-2">
+                            <input type="text" id="v3-city-search" class="w-full" placeholder="bandung">
+                            <button type="button" id="btn-v3-search" class="px-3 py-1.5 bg-indigo-600 text-white rounded">Cari</button>
+                        </div>
+                        <select id="v3-city-results" class="mt-2 w-full">
+                            <option value="">Pilih hasil…</option>
+                        </select>
+                        <div class="text-xs mt-1 text-slate-500">Pilih kab/kota untuk mengisi MyQuran v3 City ID.</div>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium">Timezone (IANA)</label>
                         <input type="text" name="timezone" value="{{ old('timezone', optional($prayer)->timezone) }}" class="mt-2 w-full" placeholder="Asia/Jakarta">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Latitude</label>
-                        <input type="text" name="latitude" value="{{ old('latitude', optional($prayer)->latitude) }}" class="mt-2 w-full" placeholder="-6.2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Longitude</label>
-                        <input type="text" name="longitude" value="{{ old('longitude', optional($prayer)->longitude) }}" class="mt-2 w-full" placeholder="106.8">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium">Penyesuaian (JSON)</label>
-                        <input type="text" name="calculation_adjust" value="{{ old('calculation_adjust', json_encode(optional($prayer)->calculation_adjust)) }}" class="mt-2 w-full" placeholder='{"fajr":20,"asr":"Standard","isha":18}'>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium">Tune (JSON)</label>
-                        <input type="text" name="calculation_tune" value="{{ old('calculation_tune', json_encode(optional($prayer)->calculation_tune)) }}" class="mt-2 w-full" placeholder='{"fajr":2,"dhuhr":0}'>
                     </div>
                 </div>
             </div>
@@ -302,3 +302,33 @@
         @endif
     </div>
 </x-app-layout>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btn-v3-search');
+  const input = document.getElementById('v3-city-search');
+  const select = document.getElementById('v3-city-results');
+  const idField = document.querySelector('input[name="myquran_v3_city_id"]');
+  if (!btn || !input || !select || !idField) return;
+  btn.addEventListener('click', async () => {
+    const q = (input.value || '').trim();
+    if (!q) return;
+    select.innerHTML = '<option value="">Memuat…</option>';
+    try {
+      const res = await fetch(`https://api.myquran.com/v3/sholat/kabkota/cari/${encodeURIComponent(q)}`);
+      if (!res.ok) { select.innerHTML = '<option value="">Gagal memuat</option>'; return; }
+      const data = await res.json();
+      const list = (data && data.data) ? data.data : [];
+      const opts = ['<option value="">Pilih hasil…</option>'].concat(list.map(item => `<option value="${item.id}">${item.lokasi}</option>`));
+      select.innerHTML = opts.join('');
+    } catch (e) {
+      select.innerHTML = '<option value="">Gagal memuat</option>';
+    }
+  });
+  select.addEventListener('change', () => {
+    const v = select.value;
+    if (v) {
+      idField.value = v;
+    }
+  });
+});
+</script>

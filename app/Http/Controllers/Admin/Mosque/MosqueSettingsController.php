@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-use App\Support\PrayTimes as PrayTimesSupport;
+use Illuminate\Support\Facades\Http;
 
 class MosqueSettingsController extends Controller
 {
@@ -19,7 +19,7 @@ class MosqueSettingsController extends Controller
     public function index()
     {
         $mosque = Auth::user()->mosque_id;
-        $prayer = PrayerSetting::where('mosque_id', $mosque)->latest()->first();
+        $prayer = PrayerSetting::where('mosque_id', $mosque)->orderByDesc('id')->first();
         $display = DisplaySetting::where('mosque_id', $mosque)->first();
 
         return view('admin.mosque.settings.index', compact('prayer', 'display'));
@@ -78,49 +78,43 @@ class MosqueSettingsController extends Controller
             'saldo_bank_syariah' => 'nullable|numeric',
             'calculation_method' => 'nullable|string',
             'timezone' => 'nullable|string',
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
-            'calculation_adjust' => 'nullable',
-            'calculation_tune' => 'nullable',
+            'myquran_v3_city_id' => 'nullable|string',
         ]);
 
-        $auto = ($data['calculation_method'] ?? '0') !== '0'
-            && ($data['latitude'] ?? null) !== null
-            && ($data['longitude'] ?? null) !== null
-            && ($data['timezone'] ?? null) !== null;
+        $method = (string) ($data["calculation_method"] ?? '0');
+        $auto = $method === 'MyQuranV3' && trim((string) ($data['myquran_v3_city_id'] ?? '')) !== '';
 
         if ($auto) {
-            $tz = (string) $data['timezone'];
-            $now = Carbon::now($tz);
-            $offsetHours = $now->offset / 3600;
-            $pt = new PrayTimesSupport((string) $data['calculation_method']);
-            $adjust = $data['calculation_adjust'] ?? null;
-            if (is_string($adjust)) {
-                $decoded = json_decode($adjust, true);
-                if (is_array($decoded)) $adjust = $decoded;
+            $id = trim((string) ($data['myquran_v3_city_id'] ?? ''));
+            $tz = (string) ($data['timezone'] ?? 'Asia/Jakarta');
+            if ($id !== '') {
+                $today = Carbon::now($tz);
+                $url = sprintf('https://api.myquran.com/v3/sholat/jadwal/%s/today', $id);
+                try {
+                    $res = Http::timeout(8)->get($url, ['tz' => $tz]);
+                    if ($res->ok()) {
+                        $json = $res->json();
+                        $map = (array)($json['data']['jadwal'] ?? []);
+                        $row = $map[$today->format('Y-m-d')] ?? (count($map) ? reset($map) : null);
+                        if (is_array($row)) {
+                            $data['fajr_time'] = $row['subuh'] ?? null;
+                            $data['dhuhr_time'] = $row['dzuhur'] ?? null;
+                            $data['asr_time'] = $row['ashar'] ?? null;
+                            $data['maghrib_time'] = $row['maghrib'] ?? null;
+                            $data['isha_time'] = $row['isya'] ?? null;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                }
             }
-            if (is_array($adjust)) {
-                $pt->adjust($adjust);
-            }
-            $tune = $data['calculation_tune'] ?? null;
-            if (is_string($tune)) {
-                $decoded = json_decode($tune, true);
-                if (is_array($decoded)) $tune = $decoded;
-            }
-            if (is_array($tune)) {
-                $pt->tune($tune);
-            }
-            $times = $pt->getTimes($now, [ (float) $data['latitude'], (float) $data['longitude'] ], (float) $offsetHours, false);
-            $data['fajr_time'] = $times['fajr'] ?? null;
-            $data['dhuhr_time'] = $times['dhuhr'] ?? null;
-            $data['asr_time'] = $times['asr'] ?? null;
-            $data['maghrib_time'] = $times['maghrib'] ?? null;
-            $data['isha_time'] = $times['isha'] ?? null;
         }
 
         PrayerSetting::create(array_merge(
             ['mosque_id' => $mosque, 'use_auto_calculation' => $auto],
-            collect($data)->only(['fajr_time', 'dhuhr_time', 'asr_time', 'maghrib_time', 'isha_time', 'calculation_method', 'calculation_adjust', 'calculation_tune', 'latitude', 'longitude', 'timezone'])->all()
+            collect($data)->only([
+                'fajr_time', 'dhuhr_time', 'asr_time', 'maghrib_time', 'isha_time',
+                'calculation_method', 'timezone', 'myquran_v3_city_id'
+            ])->all()
         ));
 
         $payload = collect($data)->only([
