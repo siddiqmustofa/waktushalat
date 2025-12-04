@@ -133,6 +133,7 @@
                 <li><a href="#fitur">Fitur</a></li>
                 <li><a href="#manfaat">Manfaat</a></li>
                 <li><a href="#tentang">Tentang</a></li>
+                <li><a href="/login" class="btn btn-outline">Login</a></li>
                 <li><a href="#daftar" class="btn btn-primary">Daftar Sekarang</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMenu()">☰</button>
