@@ -287,10 +287,29 @@ class MosqueController extends Controller
             'address' => 'nullable|string',
             'timezone' => 'nullable|string',
             'is_active' => 'boolean',
+            'admin_email' => 'nullable|string|lowercase|email|max:255',
+            'admin_password' => 'nullable|confirmed|min:6',
         ]);
         $mosque->update($data);
 
-        return redirect()->route('mosques.index');
+        $admin = \App\Models\User::where('mosque_id', $mosque->id)->where('role','mosque_admin')->first();
+        if ($admin) {
+            $updates = [];
+            if (($data['admin_email'] ?? '') !== '' && $data['admin_email'] !== $admin->email) {
+                $request->validate([
+                    'admin_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$admin->id],
+                ]);
+                $updates['email'] = (string) $data['admin_email'];
+            }
+            if (($data['admin_password'] ?? '') !== '') {
+                $updates['password'] = \Illuminate\Support\Facades\Hash::make((string) $data['admin_password']);
+            }
+            if (!empty($updates)) {
+                $admin->update($updates);
+            }
+        }
+
+        return redirect()->route('mosques.index')->with('status', 'Masjid diperbarui.');
     }
 
     /**

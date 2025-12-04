@@ -40,7 +40,7 @@ class RunningTextController extends Controller
         ]);
         RunningText::create(array_merge(['mosque_id' => $mosque], $data));
 
-        return back();
+        return back()->with('status', 'Teks berjalan ditambahkan.');
     }
 
     /**
@@ -75,7 +75,7 @@ class RunningTextController extends Controller
         $this->authorizeMosque($runningText->mosque_id);
         $runningText->delete();
 
-        return back();
+        return back()->with('status', 'Teks berjalan dihapus.');
     }
 
     protected function authorizeMosque(int $mosqueId)

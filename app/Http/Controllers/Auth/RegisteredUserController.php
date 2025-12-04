@@ -45,6 +45,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $target = ($user && $user->role === 'super_admin')
+            ? route('super.dashboard', absolute: false)
+            : route('dashboard', absolute: false);
+
+        return redirect($target);
     }
 }

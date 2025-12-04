@@ -11,7 +11,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 Route::get('/dashboard', function () {
@@ -35,6 +35,7 @@ Route::get('/registrasi-masjid', function () {
 Route::post('/registrasi-masjid', [SuperMosqueController::class, 'store'])->name('public.mosques.store');
 
 Route::middleware(['auth', 'role:super_admin'])->prefix('super')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\Admin\Super\DashboardController::class, 'index'])->name('super.dashboard');
     Route::resource('mosques', SuperMosqueController::class);
 });
 

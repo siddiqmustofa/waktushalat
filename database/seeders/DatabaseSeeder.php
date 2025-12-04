@@ -30,6 +30,23 @@ class DatabaseSeeder extends Seeder
             'refresh_seconds' => 30,
             'show_running_text' => true,
             'show_announcements' => true,
+            'info_seconds' => 5,
+            'wallpaper_seconds' => 15,
+            'wait_adzan_minutes' => 1,
+            'adzan_minutes' => 3,
+            'sholat_minutes' => 20,
+            'iqomah_minutes' => json_encode([
+                'fajr' => 10,
+                'dhuhr' => 10,
+                'asr' => 10,
+                'maghrib' => 10,
+                'isha' => 10,
+            ]),
+            'sound_fajr' => true,
+            'sound_dhuhr' => true,
+            'sound_asr' => true,
+            'sound_maghrib' => true,
+            'sound_isha' => true,
         ]);
 
         User::factory()->create([

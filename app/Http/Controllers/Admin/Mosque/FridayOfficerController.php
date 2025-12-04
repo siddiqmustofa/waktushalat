@@ -28,14 +28,14 @@ class FridayOfficerController extends Controller
             'notes' => 'nullable|string',
         ]);
         FridayOfficer::create(array_merge(['mosque_id' => $mosque], $data));
-        return back();
+        return back()->with('status', 'Petugas ditambahkan.');
     }
 
     public function destroy(FridayOfficer $fridayOfficer)
     {
         $this->authorizeMosque($fridayOfficer->mosque_id);
         $fridayOfficer->delete();
-        return back();
+        return back()->with('status', 'Petugas dihapus.');
     }
 
     public function edit(string $id)

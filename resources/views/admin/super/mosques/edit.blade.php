@@ -9,7 +9,7 @@
         <div class="bg-white dark:bg-gray-800 border rounded-xl shadow-sm">
             <div class="px-6 py-4 border-b">
                 <div class="text-lg font-semibold">Formulir</div>
-                <div class="text-sm text-slate-500">Ubah data masjid.</div>
+                <div class="text-sm text-slate-500">Ubah data masjid dan email/password admin.</div>
             </div>
             <form method="POST" action="{{ route('mosques.update', $mosque) }}" class="p-6 space-y-6">
                 @csrf
@@ -33,6 +33,21 @@
                 <div class="flex items-center gap-2">
                     <input id="is_active" type="checkbox" name="is_active" value="1" @checked($mosque->is_active) />
                     <label for="is_active" class="text-sm">Aktif</label>
+                </div>
+                <hr />
+                @php($admin = \App\Models\User::where('mosque_id', $mosque->id)->where('role','mosque_admin')->first())
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium">Email Admin</label>
+                        <input type="email" name="admin_email" value="{{ old('admin_email', optional($admin)->email) }}" class="mt-2 w-full" />
+                        <div class="text-xs text-slate-500 mt-1">Kosongkan jika tidak ingin mengubah email admin.</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Reset Password Admin</label>
+                        <input type="password" name="admin_password" class="mt-2 w-full" placeholder="Password baru" />
+                        <input type="password" name="admin_password_confirmation" class="mt-2 w-full" placeholder="Konfirmasi password" />
+                        <div class="text-xs text-slate-500 mt-1">Isi untuk mengganti password admin. Biarkan kosong jika tidak diubah.</div>
+                    </div>
                 </div>
                 <div>
                     <button class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">Simpan perubahan</button>

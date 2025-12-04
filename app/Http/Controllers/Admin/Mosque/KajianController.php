@@ -29,14 +29,14 @@ class KajianController extends Controller
             'is_active' => 'sometimes|boolean',
         ]);
         Kajian::create(array_merge(['mosque_id' => $mosque], $data));
-        return back();
+        return back()->with('status', 'Kajian ditambahkan.');
     }
 
     public function destroy(Kajian $kajian)
     {
         $this->authorizeMosque($kajian->mosque_id);
         $kajian->delete();
-        return back();
+        return back()->with('status', 'Kajian dihapus.');
     }
 
     public function edit(string $id)

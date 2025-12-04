@@ -139,6 +139,8 @@ class MosqueSettingsController extends Controller
             'saldo_bank_syariah',
         ])->all();
 
+        $payload = array_filter($payload, fn($v) => !is_null($v));
+
         $payload['show_finance_card'] = $request->boolean('show_finance_card');
         $payload['show_friday_officer_card'] = $request->boolean('show_friday_officer_card');
         $payload['show_kajian_card'] = $request->boolean('show_kajian_card');

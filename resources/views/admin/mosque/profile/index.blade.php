@@ -1,38 +1,49 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl">Profil Masjid</h2>
+        <div class="d-flex align-items-center justify-content-between">
+            <h6 class="mb-0 text-truncate" style="max-width: 70%">Profil Masjid</h6>
+            <span class="text-sm text-muted d-none d-sm-inline">Informasi dasar masjid</span>
         </div>
     </x-slot>
 
-    <div class="p-6 max-w-4xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 border rounded-xl shadow-sm">
-            <div class="px-6 py-4 border-b">
-                <div class="text-lg font-semibold">Informasi dasar</div>
-                <div class="text-sm text-slate-500">Nama, slug URL, alamat, dan timezone.</div>
+    <div class="container-fluid py-3 py-md-4">
+        @if(session('status'))
+            <div class="mx-3 mx-md-0">
+                <div class="alert alert-success" role="alert">{{ session('status') }}</div>
             </div>
-            <form method="POST" action="{{ route('mosque.profile') }}" class="p-6 space-y-6">
-                @csrf
-                <div>
-                    <label class="block text-sm font-medium">Nama</label>
-                    <input type="text" name="name" value="{{ old('name', $mosque->name) }}" class="mt-2 w-full" required />
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">Slug</label>
-                    <input type="text" name="slug" value="{{ old('slug', $mosque->slug) }}" class="mt-2 w-full" />
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">Alamat</label>
-                    <textarea name="address" class="mt-2 w-full" rows="3">{{ old('address', $mosque->address) }}</textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">Timezone</label>
-                    <input type="text" name="timezone" value="{{ old('timezone', $mosque->timezone) }}" class="mt-2 w-full" placeholder="Asia/Jakarta" />
-                </div>
-                <div>
-                    <button class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">Simpan profil</button>
-                </div>
-            </form>
+        @endif
+
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Informasi dasar</h6>
+                <p class="text-sm">Nama, slug URL, alamat, dan timezone.</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ route('mosque.profile') }}">
+                    @csrf
+                    <div class="row g-3 g-md-4">
+                        <div class="col-12">
+                            <label class="form-label">Nama</label>
+                            <input type="text" name="name" value="{{ old('name', $mosque->name) }}" class="form-control" required />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Slug</label>
+                            <input type="text" name="slug" value="{{ old('slug', $mosque->slug) }}" class="form-control" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Timezone</label>
+                            <input type="text" name="timezone" value="{{ old('timezone', $mosque->timezone) }}" class="form-control" placeholder="Asia/Jakarta" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Alamat</label>
+                            <textarea name="address" class="form-control" rows="3">{{ old('address', $mosque->address) }}</textarea>
+                        </div>
+                        <div class="col-12 d-grid d-sm-inline">
+                            <button class="btn btn-primary">Simpan profil</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>

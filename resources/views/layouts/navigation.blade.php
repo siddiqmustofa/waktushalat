@@ -1,17 +1,18 @@
-<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 w-64"
-    id="sidenav-main">
+<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 shadow"
+    id="sidenav-main" style="width: 17rem; z-index: 1050;">
+    @php($user = auth()->user())
+    @php($dashRouteName = $user?->role === 'super_admin' ? 'super.dashboard' : 'dashboard')
     <div class="sidenav-header">
-        <a class="navbar-brand m-0" href="{{ route('dashboard') }}">
+        <a class="navbar-brand m-0" href="{{ route($dashRouteName) }}">
             <x-application-logo class="navbar-brand-img h-100 w-auto fill-current text-gray-800" />
             <span class="ms-1 font-weight-bold">Admin</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0">
-    @php($user = auth()->user())
     <div class="navbar-collapse w-auto show" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                <a class="nav-link {{ request()->routeIs($dashRouteName) ? 'active' : '' }}" href="{{ route($dashRouteName) }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
                     </div>

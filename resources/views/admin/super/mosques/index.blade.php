@@ -14,6 +14,7 @@
                         <tr class="text-slate-500">
                             <th class="p-3 text-left">Nama</th>
                             <th class="p-3 text-left">Slug</th>
+                            <th class="p-3 text-left">Email Admin</th>
                             <th class="p-3 text-left">Aktif</th>
                             <th class="p-3 text-left">Aksi</th>
                         </tr>
@@ -23,6 +24,7 @@
                             <tr class="border-t">
                                 <td class="p-3 font-medium">{{ $m->name }}</td>
                                 <td class="p-3">{{ $m->slug }}</td>
+                                <td class="p-3">{{ optional(\App\Models\User::where('mosque_id', $m->id)->where('role','mosque_admin')->first())->email ?? '-' }}</td>
                                 <td class="p-3">{{ $m->is_active ? 'Ya' : 'Tidak' }}</td>
                                 <td class="p-3">
                                     <div class="flex items-center gap-2">
